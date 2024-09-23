@@ -66,7 +66,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+	uint8_t state, option;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -88,6 +88,12 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
+  HAL_FLASH_Unlock(); // unlock flash program erase
+  if(EE_Init()!= EE_OK) // if we get some error
+  {
+	  Error_Handler();
+  }
+
 
   /* USER CODE END 2 */
 
@@ -98,6 +104,76 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	  switch (state)
+	  {
+		case 0:
+		{
+			if(option == 1)// write Variable
+			{
+				option = 0;
+				state = 1;
+			}
+			else if (option == 2)// Read Variable
+			{
+				option = 0;
+				state = 2;
+			}
+		}
+		break;
+		case 1:
+		{
+			if((EE_WriteVariable(VirtAddVarTab[0], 125))!= HAL_OK)
+			{
+				Error_Handler();
+			}
+			if((EE_WriteVariable(VirtAddVarTab[1], 575))!= HAL_OK)
+			{
+				Error_Handler();
+			}
+			if((EE_WriteVariable(VirtAddVarTab[2], 933))!= HAL_OK)
+			{
+				Error_Handler();
+			}
+
+		}
+		break;
+		case 2:
+		{
+			if((EE_ReadVariable(VirtAddVarTab[0], &VarDataTmp))!= HAL_OK)
+			{
+				Error_Handler();
+			}
+
+			if(VarDataTmp != 125)
+			{
+				Error_Handler();
+			}
+			if((EE_ReadVariable(VirtAddVarTab[1], &VarDataTmp))!= HAL_OK)
+			{
+				Error_Handler();
+			}
+
+			if(VarDataTmp != 575)
+			{
+				Error_Handler();
+			}
+			if((EE_ReadVariable(VirtAddVarTab[2], &VarDataTmp))!= HAL_OK)
+			{
+				Error_Handler();
+			}
+
+			if(VarDataTmp != 933)
+			{
+				Error_Handler();
+			}
+
+			HAL_GPIO_WritePin(LED_D2_GPIO_Port, LED_D2_Pin, GPIO_PIN_RESET); // Reset Pin 9 (led on)
+			state = 0;
+		}
+
+
+	}
   }
   /* USER CODE END 3 */
 }
