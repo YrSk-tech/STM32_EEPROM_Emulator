@@ -135,6 +135,8 @@ int main(void)
 			{
 				Error_Handler();
 			}
+			state = 0;
+			HAL_GPIO_WritePin(LED_D2_GPIO_Port, LED_D2_Pin, GPIO_PIN_SET); //(led off)
 
 		}
 		break;
@@ -168,7 +170,7 @@ int main(void)
 				Error_Handler();
 			}
 
-			HAL_GPIO_WritePin(LED_D2_GPIO_Port, LED_D2_Pin, GPIO_PIN_RESET); // Reset Pin 9 (led on)
+			HAL_GPIO_WritePin(LED_D2_GPIO_Port, LED_D2_Pin, GPIO_PIN_RESET); // (led on)
 			state = 0;
 		}
 
